@@ -1,0 +1,55 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EventDemo01
+{      //自定义委托类型事件
+    class Bridegroom//新郎类
+    {
+        public delegate void MarryHandler(string str);//自定义委托 （事件的处理程序）
+        public event MarryHandler MarryEvent;//自定义委托事件        
+        public void OnMarryComing(string msg)//发出事件
+        {
+            if (MarryEvent != null)//判断是否绑定事件处理方法
+            {
+                MarryEvent(msg);//触发事件
+            }
+        }
+        static void Main(string[] args)
+        {
+            Bridegroom me = new Bridegroom();
+            friend f1 = new friend("张三");
+            friend f2 = new friend("张思");
+            friend f3 = new friend("张武");
+            //订阅事件（委托类型的事件   委托链  实例化了两个方法）  将处理方法包装
+            me.MarryEvent += new EventDemo01.Bridegroom.MarryHandler(f1.SendMessage);
+            me.MarryEvent += new EventDemo01.Bridegroom.MarryHandler(f2.SendMessage);
+            me.OnMarryComing("我是王二，我明天结婚，你们来不？");//调用事件（委托，包装的方法）
+            Console.WriteLine("---------------------------------------");
+            me.MarryEvent -= new EventDemo01.Bridegroom.MarryHandler(f1.SendMessage);
+            me.MarryEvent -= new EventDemo01.Bridegroom.MarryHandler(f2.SendMessage);
+            me.MarryEvent += new EventDemo01.Bridegroom.MarryHandler(f3.SendMessage);
+            me.OnMarryComing("我是王二，我明天结婚，你们来不？");
+            Console.WriteLine("---------------------------------------");
+            Console.Read();
+        }
+       
+    }
+
+      class  friend//宾客类
+      {
+          public  string name;
+          public friend(string tname) 
+          {
+               name=tname;
+          }
+          public void SendMessage(string msg)//事件处理函数  与委托一样
+          {
+              Console.WriteLine("发布的信息"+msg);
+              Console.WriteLine("我是"+this.name+"我一定去参加婚礼");
+          }
+
+      }
+}
